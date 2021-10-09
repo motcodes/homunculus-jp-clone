@@ -1,23 +1,35 @@
-import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import * as dat from "dat.gui";
-import gsap from "gsap";
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import * as dat from 'dat.gui';
+// import gsap from "gsap";
 
-import fragment from "./shaders/fragment.glsl";
-import vertex from "./shaders/vertex.glsl";
+import fragment from './shaders/fragment.glsl';
+import vertex from './shaders/vertex.glsl';
 
-import t1 from "./images/1.jpg";
-import t2 from "./images/2.jpg";
-import t3 from "./images/3.jpg";
-import t4 from "./images/4.jpg";
+import t1 from './images/1.jpg';
+import t2 from './images/2.jpg';
+import t3 from './images/3.jpg';
+import t4 from './images/4.jpg';
 
-import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
-import { CustomPass } from "./js/customPass";
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { CustomPass } from './js/customPass';
 
-import { RGBShiftShader } from "three/examples/jsm/shaders/RGBShiftShader.js";
-import { DotScreenShader } from "three/examples/jsm/shaders/DotScreenShader.js";
+// import { RGBShiftShader } from "three/examples/jsm/shaders/RGBShiftShader.js";
+// import { DotScreenShader } from "three/examples/jsm/shaders/DotScreenShader.js";
+
+import { getProject, types as t } from '@theatre/core';
+import studio from '@theatre/studio';
+
+studio.initialize();
+
+const proj = getProject('Homunculus JP');
+const sheet = proj.sheet('Scene');
+const distortion = sheet.object('Distortion', {
+  progress: t.number(0, { range: [0, 1] }),
+  scale: t.number(1, { range: [0, 10] }),
+});
 
 export default class Sketch {
   constructor(options) {
@@ -25,7 +37,7 @@ export default class Sketch {
 
     this.urls = [t1, t2, t3, t4];
     this.textures = this.urls.map((url) => new THREE.TextureLoader().load(url));
-    console.log("this.textures :", this.textures);
+    console.log('this.textures :', this.textures);
 
     this.container = options.dom;
     this.width = this.container.offsetWidth;
@@ -61,6 +73,11 @@ export default class Sketch {
     this.render();
     this.setupResize();
     this.settings();
+
+    distortion.onValuesChange((newValues) => {
+      this.effect1.uniforms['progress'].value = newValues.progress;
+      // this.effect1.uniforms['scale'].value = newValues.scale;
+    });
   }
 
   initPost() {
@@ -79,7 +96,7 @@ export default class Sketch {
     let that = this;
     this.material = new THREE.ShaderMaterial({
       extensions: {
-        derivatives: "#extension GL_OES_standard_derivatives: enable",
+        derivatives: '#extension GL_OES_standard_derivatives: enable',
       },
       side: THREE.DoubleSide,
       uniforms: {
@@ -125,12 +142,12 @@ export default class Sketch {
       scale: 1,
     };
     this.gui = new dat.GUI();
-    this.gui.add(this.settings, "progress", 0, 1, 0.01);
-    this.gui.add(this.settings, "scale", 0, 10, 0.1);
+    this.gui.add(this.settings, 'progress', 0, 1, 0.01);
+    this.gui.add(this.settings, 'scale', 0, 10, 0.1);
   }
 
   setupResize() {
-    window.addEventListener("resize", this.resize.bind(this));
+    window.addEventListener('resize', this.resize.bind(this));
   }
 
   resize() {
@@ -152,9 +169,10 @@ export default class Sketch {
     });
     this.time += 0.005;
     this.material.uniforms.time.value = this.time;
-    this.effect1.uniforms["time"].value = this.time;
-    this.effect1.uniforms["progress"].value = this.settings.progress;
-    this.effect1.uniforms["scale"].value = this.settings.scale;
+    this.effect1.uniforms['time'].value = this.time;
+
+    // this.effect1.uniforms['progress'].value = this.settings.progress;
+    this.effect1.uniforms['scale'].value = this.settings.scale;
 
     requestAnimationFrame(this.render.bind(this));
     // this.renderer.render(this.scene, this.camera);
@@ -162,4 +180,4 @@ export default class Sketch {
   }
 }
 
-new Sketch({ dom: document.getElementById("container") });
+new Sketch({ dom: document.getElementById('container') });
