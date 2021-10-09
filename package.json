@@ -1,13 +1,35 @@
 {
+  "name": "homunculus-jp-clone",
+  "description": "homunculus.jp Shader Clone",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/motcodes/homunculus-jp-clone"
+  },
+  "author": {
+    "name": "Matthias Oberholzer",
+    "email": "matthias.m.oberholzer@gmail.com",
+    "url": "https://matthiasoberholzer.com"
+  },
+  "source": "index.html",
+  "default": "index.html",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build index.html --dist-dir ./dist"
+  },
   "devDependencies": {
+    "@parcel/transformer-glsl": "^2.0.0-rc.0",
+    "@parcel/transformer-image": "^2.0.0-rc.0",
+    "@theatre/studio": "^0.4.6",
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
     "glslify-bundle": "^5.1.1",
-    "glslify-deps": "^1.3.2"
+    "glslify-deps": "^1.3.2",
+    "parcel": "^2.0.0-rc.0"
   },
   "dependencies": {
+    "@theatre/core": "^0.4.6",
     "dat.gui": "^0.7.7",
-    "gsap": "^3.8.0",
     "three": "^0.133.0"
   }
 }
